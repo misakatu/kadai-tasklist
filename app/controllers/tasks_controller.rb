@@ -5,7 +5,6 @@ class TasksController < ApplicationController
   
   def index
     if logged_in?
-      @task = current_user.tasks.build  # form_with 用
       @tasks = current_user.tasks.order(id: :desc).page(params[:page])
     end
   end
@@ -27,15 +26,6 @@ class TasksController < ApplicationController
       flash.now[:danger] = 'メッセージの投稿に失敗しました。'
       render 'tasks/new'
     end
-#    @task = Task.new(task_params)
-
-#    if @task.save
-#      flash[:success] = 'Task が正常に登録されました'
-#      redirect_to @task
-#    else
-#      flash.now[:danger] = 'Task が登録されませんでした'
-#      render :new
-#    end
   end
 
   def edit
@@ -64,7 +54,11 @@ class TasksController < ApplicationController
   end
   
   def set_tasks
-    @task = current_user.tasks.find_by(id: params[:id])
+    if correct_user
+      @task = current_user.tasks.find_by(id: params[:id])
+    else
+      redirect_to root_path
+    end
   end
   
   def correct_user
