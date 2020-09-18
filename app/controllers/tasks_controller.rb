@@ -1,5 +1,5 @@
 class TasksController < ApplicationController
-  before_action :set_tasks, only: [:show, :edit, :update, :destroy]
+  before_action :show_tasks, only: [:show, :edit, :update, :destroy]
   before_action :require_user_logged_in, only: [:index, :show, :new, :edit]
 
   
@@ -53,10 +53,9 @@ class TasksController < ApplicationController
     params.require(:task).permit(:content, :status)
   end
   
-  def set_tasks
-    if correct_user
+  def show_tasks
       @task = current_user.tasks.find_by(id: params[:id])
-    else
+    unless @task
       redirect_to root_path
     end
   end
